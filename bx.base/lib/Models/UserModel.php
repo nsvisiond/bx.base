@@ -3,9 +3,15 @@
 
 namespace BX\Base\Models;
 
-use Bitrix\Main\Type\Date;
+use Bitrix\Main\ArgumentException;
+use Bitrix\Main\Error;
+use Bitrix\Main\GroupTable;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\Result;
+use Bitrix\Main\SystemException;
 use Bitrix\Main\Type\DateTime;
 use BX\Base\Abstractions\AbstractModel;
+use CUser;
 
 class UserModel extends AbstractModel
 {
@@ -1015,14 +1021,6 @@ class UserModel extends AbstractModel
     }
 
     /**
-     * @return integer
-     */
-    public function getId(): int
-    {
-        return (int)$this['ID'];
-    }
-
-    /**
      * @return string
      */
     public function getName(): string
@@ -1090,4 +1088,72 @@ class UserModel extends AbstractModel
         $this[strtoupper($code)] = $value;
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return (int)$this['ID'];
+    }
+
+    public function isAdmin(): bool
+    {
+        global $USER;
+
+        return $USER->IsAdmin();
+    }
+
+    public function getUserGroup(): array
+    {
+        global $USER;
+        $systemGroups = [2, 3, 4];
+        $userGroups = $USER->GetUserGroupArray();
+        $groups = array_diff($userGroups, $systemGroups);
+
+        try {
+            $groupList = GroupTable::getList([
+                'filter' => [
+                    '=ID' => $groups,
+                ],
+                'select' => [
+                    'ID',
+                    'NAME'
+                ]
+            ])->fetchAll();
+            return array_combine(array_column($groupList, 'ID'), array_column($groupList, 'NAME'));
+        } catch (ObjectPropertyException|ArgumentException|SystemException $e) {
+            $this->log->error($e->getMessage(), $e->getTrace());
+        }
+
+        return [];
+    }
+
+    public function save(): Result
+    {
+        $result = new Result();
+        $cUser = new CUser();
+
+        $id = $this->getId();
+        $data = $this->toArray();
+
+        if ($id > 0) {
+            unset($data['ID']);
+            $isSuccess = (bool)$cUser->Update($id, $data);
+
+            if (!$isSuccess) {
+                return $result->addError(new Error("Ошибка обновления пользователя: {$cUser->LAST_ERROR}"));
+            }
+
+            return $result;
+        }
+
+        $id = (int)$cUser->Add($data);
+        if (!$id) {
+            return $result->addError(new Error("Ошибка добавления пользователя: {$cUser->LAST_ERROR}"));
+        }
+
+        return $result;
+    }
+
 }

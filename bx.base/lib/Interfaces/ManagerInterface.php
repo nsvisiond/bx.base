@@ -6,11 +6,7 @@ use Bitrix\Main\Result;
 
 interface ManagerInterface
 {
-    public function save(ModelInterface $model): Result;
-
-    public function update(ModelInterface $model, array $data): Result;
-
-    public function updateWithNulls(ModelInterface $model, array $data): Result;
-
+    public function create(ModelInterface $model): Result;
+    public function update(ModelInterface $model): Result;
     public function delete(int $id): Result;
 }

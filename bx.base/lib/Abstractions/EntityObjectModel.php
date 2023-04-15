@@ -19,7 +19,7 @@ class EntityObjectModel extends AbstractModel
     /**
      * @return array
      */
-    protected function toArray(): array
+    public function toArray(): array
     {
         $result = [];
         foreach ($this as $name => $value) {

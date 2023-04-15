@@ -3,6 +3,7 @@
 namespace BX\Base\Interfaces;
 
 use ArrayAccess;
+use Bitrix\Main\Result;
 use IteratorAggregate;
 
 interface ModelInterface extends ArrayAccess, IteratorAggregate, CollectionItemInterface, MappableInterface
@@ -11,4 +12,5 @@ interface ModelInterface extends ArrayAccess, IteratorAggregate, CollectionItemI
      * @return array
      */
     public function getApiModel(): array;
+    public function save(): Result;
 }

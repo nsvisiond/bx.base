@@ -14,12 +14,16 @@ use BX\Base\Models\UserModel;
 
 class UserRepository extends AbstractRepository
 {
+    protected \BX\Log $log;
+
+    public function __construct()
+    {
+        $this->log = new \BX\Log();
+    }
+
+
     /**
      * @return UserModel
-     * @throws ArgumentException
-     * @throws ObjectPropertyException
-     * @throws SystemException
-     * @throws \Exception
      */
     public function getCurrentUser(): ?UserModel
     {
@@ -40,9 +44,6 @@ class UserRepository extends AbstractRepository
     /**
      * @param int $id
      * @return UserModel|\BX\Base\Interfaces\CollectionItemInterface|null
-     * @throws \Bitrix\Main\ArgumentException
-     * @throws \Bitrix\Main\ObjectPropertyException
-     * @throws \Bitrix\Main\SystemException
      */
     public function getById(int $id): ?ModelInterface
     {
@@ -53,9 +54,14 @@ class UserRepository extends AbstractRepository
             'limit' => 1,
         ];
 
-        $fileList = $this->getList($params);
+        try {
+            $fileList = $this->getList($params);
+            return $fileList->first();
+        } catch (ObjectPropertyException|ArgumentException|SystemException $e) {
+            $this->log->error($e->getMessage(), $e->getTrace());
+        }
 
-        return $fileList->first();
+        return null;
     }
 
     /**

@@ -22,6 +22,7 @@ abstract class AbstractModel implements ModelInterface
      * @var array|EntityObject
      */
     protected $data;
+    protected \BX\Log $log;
 
     /**
      * @param $data
@@ -29,13 +30,19 @@ abstract class AbstractModel implements ModelInterface
      */
     public function __construct($data)
     {
-        if (!is_array($data) && !($data instanceof EntityObject)) {
+        if (!is_array($data) && !($data instanceof EntityObject) && !($data instanceof ModelInterface)) {
             throw new Exception('Invalid data type');
         }
+
+        $this->log = new \BX\Log('model');
 
         $this->data = $data;
         if ($data instanceof EntityObject) {
             $this->reflectEntityObject();
+        }
+
+        if ($data instanceof ModelInterface) {
+            $this->data = $data;
         }
     }
 

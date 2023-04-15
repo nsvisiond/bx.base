@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bx\Base\Options;
+namespace BX\Base\Options;
 
 
 /**
@@ -50,11 +50,11 @@ class Tab extends OptionsPageAbstract
 
     public function display(): void
     {
-        /** @var \Bx\Base\Options\Option $option */
+        /** @var \BX\Base\Options\Option $option */
         foreach ($this->getOptionsWoGroup() as $option) {
             $option->display();
         }
-        /** @var \Bx\Base\Options\Group $group */
+        /** @var \BX\Base\Options\Group $group */
         foreach ($this->groups as $group) {
             $group->display();
             foreach ($this->getGroupOptions($group->getCode()) as $option) {
@@ -175,7 +175,7 @@ class Tab extends OptionsPageAbstract
      * @param string $code
      * @param string $type
      * @param string $name
-     * @return \Bx\Base\Options\Option
+     * @return \BX\Base\Options\Option
      */
     public function addOption(string $code, string $name = '', string $type = Option::TYPE_STRING): Option
     {
@@ -195,7 +195,7 @@ class Tab extends OptionsPageAbstract
     private function getGroupOptions(string $code): array
     {
         $groupOptions = [];
-        /** @var \Bx\Base\Options\Option $option */
+        /** @var \BX\Base\Options\Option $option */
         foreach ($this->options as $option) {
             if ($option->getGroup() == $code) {
                 $groupOptions[] = $option;

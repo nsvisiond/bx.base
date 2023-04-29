@@ -11,6 +11,7 @@ use Bitrix\Main\Type\Date;
 use Bitrix\Main\Type\DateTime;
 use BX\Base\Interfaces\ModelInterface;
 use BX\Base\Traits\EntityObjectHelper;
+use BX\Log;
 use Exception;
 use Iterator;
 
@@ -22,7 +23,7 @@ abstract class AbstractModel implements ModelInterface
      * @var array|EntityObject
      */
     protected $data;
-    protected \BX\Log $log;
+    protected Log $log;
 
     /**
      * @param $data
@@ -30,11 +31,15 @@ abstract class AbstractModel implements ModelInterface
      */
     public function __construct($data)
     {
+        if ($data === null) {
+            return null;
+        }
+
         if (!is_array($data) && !($data instanceof EntityObject) && !($data instanceof ModelInterface)) {
             throw new Exception('Invalid data type');
         }
 
-        $this->log = new \BX\Log('model');
+        $this->log = new Log('model');
 
         $this->data = $data;
         if ($data instanceof EntityObject) {

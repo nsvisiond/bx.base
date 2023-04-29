@@ -1047,6 +1047,21 @@ class UserModel extends AbstractModel
     /**
      * @return string
      */
+    public function getFullName(): string
+    {
+        $fio = [
+            (string)$this['LAST_NAME'],
+            (string)$this['NAME'],
+            (string)$this['SECOND_NAME']
+        ];
+        TrimArr($fio);
+
+        return implode(' ', $fio);
+    }
+
+    /**
+     * @return string
+     */
     public function getEmail(): string
     {
         return (string)$this["EMAIL"];

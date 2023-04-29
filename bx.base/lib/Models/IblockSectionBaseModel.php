@@ -339,6 +339,11 @@ class IblockSectionBaseModel extends AbstractModel
         $this['XML_ID'] = $value;
     }
 
+    public function isParent(): bool
+    {
+        return $this->getRightMargin() - $this->getLeftMargin() > 1;
+    }
+
     public function save(): Result
     {
         $result = new Result();

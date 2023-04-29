@@ -23,6 +23,7 @@ class IblockSectionBaseRepository extends AbstractRepository
     public function __construct()
     {
         $this->log = new Log();
+        $this->setIblockId();
     }
 
     /**
@@ -95,6 +96,10 @@ class IblockSectionBaseRepository extends AbstractRepository
         }
 
         $modelClass = str_replace(['Repository', 'Repositories'], ['Model', 'Models'], get_called_class());
+        if (!class_exists($modelClass)) {
+            $modelClass = str_replace(['Repository', 'Repositories'], ['', 'Models'], get_called_class());
+        }
+
         return new ModelCollection($section, $modelClass);
     }
 

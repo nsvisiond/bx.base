@@ -1,8 +1,8 @@
 {
     "require": {
-        "nsvisiond/bxmonolog": "dev-master",
         "symfony/dotenv": "^6.2",
-        "ge1i0n/bitrix-blade": "^0.9.4"
+        "ge1i0n/bitrix-blade": "^0.9.4",
+        "itrukhin/bxmonolog": "dev-master"
     },
     "autoload": {
         "psr-4": {

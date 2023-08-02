@@ -1,0 +1,26 @@
+{
+    "name": "nsvisind/bx.base",
+    "description": "Module for an architectural approach for Bitrix",
+    "type": "bitrix-module",
+    "version": "23.8.2",
+    "time": "02.08.2023",
+    "license": "GPL-3.0-or-later",
+    "homepage": "https://github.com/nsvisiond/bx.base",
+    "require": {
+        "php": ">=7.4",
+        "symfony/dotenv": "^5.4|^6.2",
+        "ge1i0n/bitrix-blade": "^0.9.4",
+        "itrukhin/bxmonolog": "dev-master"
+    },
+    "authors": [
+        {
+            "name": "Kirill Novozhilov",
+            "email": "kirk@nsvision.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "BX\\Base\\": "lib/"
+        }
+    }
+}

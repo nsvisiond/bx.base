@@ -1,5 +1,5 @@
 {
-    "name": "nsvisind/bx.base",
+    "name": "nsvisiond/bx.base",
     "description": "Module for an architectural approach for Bitrix",
     "type": "bitrix-module",
     "version": "23.8.2",

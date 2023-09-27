@@ -7,7 +7,7 @@
     "license": "GPL-3.0-or-later",
     "homepage": "https://github.com/nsvisiond/bx.base",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "symfony/dotenv": "^5.4|^6.2",
         "ge1i0n/bitrix-blade": "^0.9.4",
         "itrukhin/bxmonolog": "dev-master"

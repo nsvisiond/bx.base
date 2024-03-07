@@ -6,7 +6,6 @@ use Symfony\Component\Dotenv\Dotenv;
 
 if (file_exists(Application::getDocumentRoot() . '/local/vendor/autoload.php')) {
     include Application::getDocumentRoot() . '/local/vendor/autoload.php';
-    BladeProvider::register();
 }
 
 if (file_exists(Application::getDocumentRoot() . '/local/.env')) {

@@ -20,15 +20,24 @@ Loader::includeModule('iblock');
 
 class IblockElementBaseRepository extends AbstractRepository
 {
-    protected \BX\Log $log;
+    protected \App\Log $log;
     protected string $iblockApiCode = '';
     protected string $iblockCode;
     protected int $iblockId;
 
     public function __construct()
     {
-        $this->log = new \BX\Log();
+        $this->log = new \App\Log();
         $this->setIblockIdAndCodeByApiCode();
+    }
+
+    /**
+     * Получить ID ифноблока
+     * @return int
+     */
+    public function getIblockId(): int
+    {
+        return $this->iblockId;
     }
 
     protected function setIblockIdAndCodeByApiCode()
@@ -117,5 +126,30 @@ class IblockElementBaseRepository extends AbstractRepository
         ]);
     }
 
+    /**
+     * Получим список элементов каталога с ключом по
+     * xml_id (он же uuid)
+     * @return array
+     */
+    public function getListByXmlId()
+    {
+        $catalogElementByXmlId = [];
+
+        if (empty($params['select'])) {
+            $params['select'] = [
+                'ID',
+                'XML_ID'
+            ];
+        }
+
+        $params['filter']['=IBLOCK_ID'] = $this->iblockId;
+        $iblockElementClass = '\Bitrix\Iblock\Elements\Element' . ucfirst($this->iblockApiCode) . 'Table';
+        $iblockElementsList = $iblockElementClass::getList($params)->fetchAll();
+        foreach ($iblockElementsList as $iblockElement){
+            $catalogElementByXmlId[$iblockElement['XML_ID']] = $iblockElement['ID'];
+        }
+
+        return $catalogElementByXmlId;
+    }
 
 }

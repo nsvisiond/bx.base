@@ -9,9 +9,10 @@ use Bitrix\Main\ORM\Objectify\EntityObject;
 use Bitrix\Main\SystemException;
 use Bitrix\Main\Type\Date;
 use Bitrix\Main\Type\DateTime;
+use BX\Base\Interfaces\DtoInterface;
 use BX\Base\Interfaces\ModelInterface;
 use BX\Base\Traits\EntityObjectHelper;
-use BX\Log;
+use App\Log;
 use Exception;
 use Iterator;
 
@@ -23,6 +24,7 @@ abstract class AbstractModel implements ModelInterface
      * @var array|EntityObject
      */
     protected $data;
+    protected int $iblockCode; /*todo наверное надо это в дочерних классах жёстко определять и потом в data пробрасывать*/
     protected Log $log;
 
     /**
@@ -35,7 +37,11 @@ abstract class AbstractModel implements ModelInterface
             return null;
         }
 
-        if (!is_array($data) && !($data instanceof EntityObject) && !($data instanceof ModelInterface)) {
+        if (!is_array($data) &&
+            !($data instanceof EntityObject) &&
+            !($data instanceof ModelInterface) &&
+            !($data instanceof DtoInterface)
+        ) {
             throw new Exception('Invalid data type');
         }
 
@@ -48,6 +54,10 @@ abstract class AbstractModel implements ModelInterface
 
         if ($data instanceof ModelInterface) {
             $this->data = $data;
+        }
+
+        if ($data instanceof DtoInterface) {
+            $this->data = $data->mapDataToEntity();
         }
     }
 

@@ -3,7 +3,7 @@
 
 namespace BX\Base\Repositories;
 
-use BX\Log;
+use App\Log;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\Model\Section;
 use Bitrix\Main\ArgumentException;
@@ -24,6 +24,21 @@ class IblockSectionBaseRepository extends AbstractRepository
     {
         $this->log = new Log();
         $this->setIblockId();
+    }
+    public function getIblockId(): int
+    {
+        return $this->iblockId;
+    }
+
+    public function getIblockCode(): string
+    {
+        return $this->iblockCode;
+    }
+
+
+    public function getIblockApiCode(): string
+    {
+        return $this->iblockApiCode;
     }
 
     /**
@@ -120,5 +135,66 @@ class IblockSectionBaseRepository extends AbstractRepository
         } catch (ObjectPropertyException|ArgumentException|SystemException $e) {
             $this->log->error($e->getMessage(), $e->getTrace());
         }
+    }
+
+    /**
+     * Список разделов по XML_ID
+     * @return array
+     */
+    public function getListByXmlId()
+    {
+        if (empty($params['select'])) {
+            $params['select'] = [
+                'ID',
+                'XML_ID'
+            ];
+        }
+
+        $sectionEntity = Section::compileEntityByIblock($this->iblockId);
+        $section = [];
+        $sectionByXml = [];
+        try {
+            $params['filter']['=IBLOCK_ID'] = $this->iblockId;
+            $section = $sectionEntity::getList($params)->fetchAll();
+            foreach ($section as $item){
+                if($item['XML_ID'] != ''){
+                    $sectionByXml[$item['XML_ID']] = $item['ID'];
+                }
+            }
+        } catch (ObjectPropertyException|ArgumentException|SystemException $e) {
+            $this->log->error($e->getMessage(), $e->getTrace());
+        }
+
+        return $sectionByXml;
+    }
+
+    /**
+     * Массив id разделов, чтобы проверить
+     * что запрашиваемый раздел вообще есть
+     * @return array
+     */
+    public function getListId()
+    {
+        if (empty($params['select'])) {
+            $params['select'] = [
+                'ID',
+            ];
+        }
+
+        $sectionEntity = Section::compileEntityByIblock($this->iblockId);
+        $section = [];
+        $sectionById = [];
+        try {
+            $params['filter']['=IBLOCK_ID'] = $this->iblockId;
+            $section = $sectionEntity::getList($params)->fetchAll();
+            foreach ($section as $item){
+                $sectionById[] = $item['ID'];
+
+            }
+        } catch (ObjectPropertyException|ArgumentException|SystemException $e) {
+            $this->log->error($e->getMessage(), $e->getTrace());
+        }
+
+        return $sectionById;
     }
 }

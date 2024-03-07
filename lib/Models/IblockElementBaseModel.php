@@ -7,6 +7,7 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Result;
 use Bitrix\Main\Type\DateTime;
 use BX\Base\Abstractions\AbstractModel;
+use GKML\Main\Helpers\PreparePropertyHelper;
 
 Loader::includeModule('iblock');
 
@@ -22,12 +23,39 @@ class IblockElementBaseModel extends AbstractModel
     }
 
     /**
+     * @param int $value
+     * @return void
+     */
+    public function setPrice(int $value)
+    {
+        $this['PRICE'] = $value;
+    }
+
+    /**
+     * @param int $value
+     * @return void
+     */
+    public function setQuantity(int $value)
+    {
+        $this['QUANTITY'] = $value;
+    }
+
+    /**
      * @param string $value
      * @return void
      */
     public function setName(string $value)
     {
         $this['NAME'] = $value;
+    }
+
+    /**
+     * @param string $value
+     * @return void
+     */
+    public function setXmlId(string $value)
+    {
+        $this['XML_ID'] = $value;
     }
 
     /**
@@ -164,6 +192,7 @@ class IblockElementBaseModel extends AbstractModel
         return [
             'ID' => $this->getId(),
             'NAME' => $this->getName(),
+            'XML_ID' => $this->getXmlId(),
             'ACTIVE' => $this->getActive(),
             'IBLOCK_ID' => $this->getIblockId(),
             'DATE_CREATE' => $this->getDateCreate(),
@@ -177,8 +206,47 @@ class IblockElementBaseModel extends AbstractModel
             'CODE' => $this->getCode(),
             'TAGS' => $this->getTags(),
             'IBLOCK_SECTION_ID' => $this->getIblockSectionId(),
+            'IBLOCK_SECTION' => $this->getIblockSection(),
             'TIMESTAMP_X' => $this->getTimestampX(),
+            'PRICE' => $this->getPrice(),
+            'QUANTITY' => $this->getQuantity(),
+            'PROPERTY_VALUES' => [
+                'MORE_PHOTO' => $this->getMorePhoto(),
+                'FILES' => $this->getFiles(),
+            ]
         ];
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getMorePhoto(): ?array
+    {
+        return $this['PROPERTY_MORE_PHOTO'];
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getFiles(): ?array
+    {
+        return $this['PROPERTY_FILES'];
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice(): float
+    {
+        return (float)$this['PRICE'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantity(): int
+    {
+        return (int)$this['QUANTITY'];
     }
 
     /**
@@ -195,6 +263,14 @@ class IblockElementBaseModel extends AbstractModel
     public function getName(): string
     {
         return (string)$this['NAME'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getXmlId(): string
+    {
+        return (string)$this['XML_ID'];
     }
 
     /**
@@ -302,6 +378,14 @@ class IblockElementBaseModel extends AbstractModel
     }
 
     /**
+     * @return mixed|null
+     */
+    public function getIblockSection()
+    {
+        return $this['IBLOCK_SECTION'];
+    }
+
+    /**
      * @return ?DateTime
      */
     public function getTimestampX(): ?DateTime
@@ -318,6 +402,17 @@ class IblockElementBaseModel extends AbstractModel
         $data = $this->toArray();
 
         if ($id > 0) {
+
+            //Множественные свойства
+            $arMultipleProperties = PreparePropertyHelper::getAllMultiplePropertyCodes($data['IBLOCK_ID']);
+
+            foreach($data['PROPERTY_VALUES'] as $propCode => $propValue){
+                if(!empty($propValue) && in_array($propCode, $arMultipleProperties)){
+                    //Очищаем множественное свойство типа файл перед обновлением элемента иначе данные задвоятся
+                    \CIBlockElement::SetPropertyValuesEx($id, false, [$propCode => ['VALUE'=>'', 'DESCRIPTION'=>'']]);
+                }
+            }
+
             unset($data['ID']);
             $isSuccess = (bool)$element->Update($id, $data);
 

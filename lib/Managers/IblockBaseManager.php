@@ -9,22 +9,25 @@ use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\Result;
 use Bitrix\Main\SystemException;
 use BX\Base\Abstractions\AbstractManager;
+use BX\Base\Abstractions\AbstractRepository;
+use BX\Base\Interfaces\RepositoryInterface;
 use CIBlockElement;
 use CIBlockSection;
 use Exception;
-use Rpn\Main\Repositories\RegionalContentElementRepository;
-use Rpn\Main\Repositories\RegionalContentSectionRepository;
+use OG\Main\Repositories\RegionalContentElementRepository;
+use OG\Main\Repositories\RegionalContentSectionRepository;
+use BX\Base\Interfaces\ModelInterface;
 
 class IblockBaseManager extends AbstractManager
 {
     /**
-     * @var \Rpn\Main\Repositories\RegionalContentElementRepository
+     * @var \OG\Main\Repositories\RegionalContentElementRepository
      */
-    protected RegionalContentElementRepository $elementRepository;
+    protected AbstractRepository $elementRepository;
     /**
-     * @var \Rpn\Main\Repositories\RegionalContentSectionRepository
+     * @var \OG\Main\Repositories\RegionalContentSectionRepository
      */
-    protected RegionalContentSectionRepository $sectionRepository;
+    protected RepositoryInterface $sectionRepository;
 
     public function deleteElement(int $id): Result
     {
@@ -71,5 +74,10 @@ class IblockBaseManager extends AbstractManager
         }
 
         return $result;
+    }
+
+    public function save(ModelInterface $model): Result
+    {
+        return $model->save();
     }
 }

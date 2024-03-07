@@ -25,12 +25,14 @@ class UserManager extends AbstractManager
      * @param array $data
      * @return Result
      */
-    public function updateWithNulls(ModelInterface $model, array $data): Result
+    public function save(ModelInterface $model): Result
     {
-        $data = $this->processFields($data);
 
         $result = new Result();
         $cUser = new CUser();
+
+        $data = $model->toArray();
+        unset($data['ID']);
 
         if ($model->getId() > 0) {
             $isSuccess = (bool)$cUser->Update($model->getId(), $data);
@@ -42,7 +44,7 @@ class UserManager extends AbstractManager
             return $result;
         }
 
-        $id = (int)$cUser->Add($data);
+        $id = (int)$cUser->Add($model->toArray());
         if (!$id) {
             return $result->addError(new Error("Ошибка добавления пользователя: {$cUser->LAST_ERROR}"));
         }
@@ -85,5 +87,4 @@ class UserManager extends AbstractManager
 
         return $result;
     }
-
 }

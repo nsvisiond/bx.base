@@ -5,7 +5,7 @@ namespace BX\Base\Abstractions;
 
 use BX\Base\Interfaces\ManagerInterface;
 use BX\Base\Interfaces\RepositoryInterface;
-use BX\Log;
+use App\Log;
 
 abstract class AbstractManager implements ManagerInterface
 {

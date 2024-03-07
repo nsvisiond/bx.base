@@ -1166,6 +1166,8 @@ class UserModel extends AbstractModel
         $id = (int)$cUser->Add($data);
         if (!$id) {
             return $result->addError(new Error("Ошибка добавления пользователя: {$cUser->LAST_ERROR}"));
+        } else {
+            $result->setLastId($id);
         }
 
         return $result;

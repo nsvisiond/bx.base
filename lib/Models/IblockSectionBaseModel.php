@@ -365,7 +365,10 @@ class IblockSectionBaseModel extends AbstractModel
 
         $id = (int)$section->Add($data);
         if (!$id) {
+            $result->setLastId(0);
             return $result->addError(new Error("Ошибка добавления раздела инфоблока: {$section->LAST_ERROR}"));
+        } else {
+            $result->setLastId($id);
         }
 
         return $result;

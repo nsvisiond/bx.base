@@ -14,11 +14,11 @@ use BX\Base\Models\UserModel;
 
 class UserRepository extends AbstractRepository
 {
-    protected \BX\Log $log;
+    protected \App\Log $log;
 
     public function __construct()
     {
-        $this->log = new \BX\Log();
+        $this->log = new \App\Log();
     }
 
 

@@ -7,7 +7,6 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Result;
 use Bitrix\Main\Type\DateTime;
 use BX\Base\Abstractions\AbstractModel;
-use GKML\Main\Helpers\PreparePropertyHelper;
 
 Loader::includeModule('iblock');
 
@@ -402,17 +401,6 @@ class IblockElementBaseModel extends AbstractModel
         $data = $this->toArray();
 
         if ($id > 0) {
-
-            //Множественные свойства
-            $arMultipleProperties = PreparePropertyHelper::getAllMultiplePropertyCodes($data['IBLOCK_ID']);
-
-            foreach($data['PROPERTY_VALUES'] as $propCode => $propValue){
-                if(!empty($propValue) && in_array($propCode, $arMultipleProperties)){
-                    //Очищаем множественное свойство типа файл перед обновлением элемента иначе данные задвоятся
-                    \CIBlockElement::SetPropertyValuesEx($id, false, [$propCode => ['VALUE'=>'', 'DESCRIPTION'=>'']]);
-                }
-            }
-
             unset($data['ID']);
             $isSuccess = (bool)$element->Update($id, $data);
 
